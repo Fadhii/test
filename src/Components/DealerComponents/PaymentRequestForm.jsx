@@ -49,7 +49,7 @@ const PaymentRequestForm = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100 h-screen">
+        <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full md:w-2/3 lg:w-1/2 p-12 bg-white rounded-2xl shadow-xl m-8">
                 {/* Full Name */}
                 <div className="col-span-1">

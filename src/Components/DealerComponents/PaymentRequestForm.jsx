@@ -109,7 +109,7 @@ const PaymentRequestForm = () => {
                     <select
                         value={formData.paymentMethod}
                         onChange={(e) => handleInputChange('paymentMethod', e.target.value)}
-                        className={`p-2 pl-3 w-full rounded-md bg-light_gray border border-gray-300 h-10 ${
+                        className={`p-2 pl-3 w-full rounded-md focus:outline-none focus:ring-0 border border-gray-300 h-10 ${
                             formData.paymentMethod === '' ? 'text-gray-400' : 'text-black'
                         }`}
                         required

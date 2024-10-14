@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import InputFieldComponent from '../../reUsableComponents/InputFieldComponent';
+import Modal from '../../reUsableComponents/Modal'; // Import the custom modal
+import SubmitButton from '../../reUsableComponents/SubmitButton'; // Import your SubmitButton component
 
 const PaymentRequestForm = () => {
     const [formData, setFormData] = useState({
@@ -17,6 +19,7 @@ const PaymentRequestForm = () => {
     });
 
     const [documentName, setDocumentName] = useState('No file chosen');
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
 
     const handleInputChange = (field, value) => {
         setFormData((prevData) => ({
@@ -34,12 +37,39 @@ const PaymentRequestForm = () => {
         setDocumentName(selectedFile ? selectedFile.name : 'No file chosen');
     };
 
-    const handleSubmit = async (e) => {
+    const validateForm = () => {
+        const requiredFields = [
+            'fullName', 'emailAddress', 'contactNumber',
+            'paymentAmount', 'paymentMethod',
+            'bankName', 'accountHolderName', 'accountNumber', 'bankBranch', 'ifscCode'
+        ];
+
+        for (const field of requiredFields) {
+            if (!formData[field]) {
+                return false; // Return false if any field is missing
+            }
+        }
+
+        return true;
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
 
+        if (!validateForm()) {
+            console.error('Validation failed: Please fill in all required fields.');
+            return;
+        }
+
+        setIsModalOpen(true); // Open the confirmation modal after validation
+    };
+
+    const handleConfirm = async () => {
+        setIsModalOpen(false); // Close modal when confirmed
+
         try {
-            // Simulating a request or submission
-            await new Promise((resolve) => setTimeout(resolve, 2000)); // Mock async operation, replace with actual API call
+            // Simulate a request or submission
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Mock async operation, replace with actual API call
 
             // Log the form data to the console
             console.log("Form submitted successfully:", formData);
@@ -68,7 +98,7 @@ const PaymentRequestForm = () => {
                 <div className="col-span-1">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                     <InputFieldComponent
-                        type="text"
+                        type="email"
                         placeholder="Enter email"
                         name="emailAddress"
                         value={formData.emailAddress}
@@ -205,23 +235,50 @@ const PaymentRequestForm = () => {
                         />
                     </div>
                 </div>
-
+                
                 {/* Buttons */}
-                <div className="md:col-span-2 flex justify-end items-center mt-4">
-                    <button
-                        type="button"
-                        className="bg-red-700 text-white rounded-full mr-2 w-48 h-8"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="bg-gray-500 text-white rounded-full w-48 h-8"
-                    >
-                        Confirm
-                    </button>
-                </div>
+<div className="md:col-span-2 flex justify-end items-center mt-4">
+    <button
+        type="reset"
+        onClick={() => setFormData({})}
+        className="bg-red-700 text-white rounded-full mr-2 w-48 h-8"
+    >
+        Cancel
+    </button>
+    <button
+        type="submit"
+        className="bg-gray-500 text-white rounded-full w-48 h-8"
+    >
+        Confirm
+    </button>
+</div>
+
             </form>
+
+            {/* Confirmation Modal */}
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                heading="Confirm Payment Request"
+                message={(
+                    <div>
+                        <p><strong>Full Name:</strong> {formData.fullName}</p>
+                        <p><strong>Email Address:</strong> {formData.emailAddress}</p>
+                        <p><strong>Contact Number:</strong> {formData.contactNumber}</p>
+                        <p><strong>Payment Amount:</strong> {formData.paymentAmount}</p>
+                        <p><strong>Payment Method:</strong> {formData.paymentMethod}</p>
+                        <p><strong>Bank Name:</strong> {formData.bankName}</p>
+                        <p><strong>Account Holder Name:</strong> {formData.accountHolderName}</p>
+                        <p><strong>Account Number:</strong> {formData.accountNumber}</p>
+                        <p><strong>Bank Branch:</strong> {formData.bankBranch}</p>
+                        <p><strong>IFSC Code:</strong> {formData.ifscCode}</p>
+                        <p><strong>Supporting Document:</strong> {documentName}</p>
+                    </div>
+                )}
+                confirm={true} // This is a confirmation modal
+                btn_label="Confirm"
+                onConfirm={handleConfirm} // Call handleConfirm when the button is clicked
+            />
         </div>
     );
 };
